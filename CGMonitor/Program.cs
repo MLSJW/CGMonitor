@@ -1,12 +1,16 @@
 ﻿using System;
-
+using CGMonitor.Overl;
+using Up;
 namespace CGMonitor
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            
+            var overlay = new OverlayApp();
+            await overlay.Run();
+            HardwareTester.RunDiagnostics();
+
         }
     }
 }
