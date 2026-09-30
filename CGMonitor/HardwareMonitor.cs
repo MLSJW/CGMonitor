@@ -11,28 +11,31 @@ namespace CGMonitor
     public class HardwareMonitor
     {
         private readonly CPUMonitor _cpu = new CPUMonitor();
+        private readonly UpdateVisitor _updateVisitor = new UpdateVisitor();
         public SensorSnapshot Snapshot { get => _current; }
         private SensorSnapshot _current { get; set; }
         private Computer _computer { get; set; }
+
         public HardwareMonitor() {
-            _computer = new Computer
-            { IsCpuEnabled = true,
-                IsGpuEnabled = true,
-                IsMemoryEnabled = true,
-                IsMotherboardEnabled = true,
-                IsControllerEnabled = false,
-                IsNetworkEnabled = false,
-                IsStorageEnabled = false,
-                IsPowerMonitorEnabled = true, };
-            _computer.Open();
-            _current = new SensorSnapshot();
-            InitializeMonitors();
-            }
+                                   _computer = new Computer
+                                   {   IsCpuEnabled = true,
+                                       IsGpuEnabled = true,
+                                       IsMemoryEnabled = true,
+                                       IsMotherboardEnabled = true,
+                                       IsControllerEnabled = false,
+                                       IsNetworkEnabled = false,
+                                       IsStorageEnabled = false,
+                                       IsPowerMonitorEnabled = true, 
+                                   };
+                                    _computer.Open();
+                                    _current = new SensorSnapshot();
+                                    InitializeMonitors();
+                                   }
        
 
         private void InitializeMonitors()
         {
-            _computer.Accept(new UpdateVisitor());
+            _computer.Accept(_updateVisitor);
 
             foreach (IHardware hardware in _computer.Hardware)
             {
@@ -40,40 +43,22 @@ namespace CGMonitor
                 {
                     _cpu.Initialize(hardware); 
                 }
-
+            }
+            foreach(IHardware hardware in _computer.Hardware)
+            {
+                if(hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel|| hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia)
+                {
+                    //_gpu.Initialize(hardware)
+                }
             }
         }
+
         public void Update()
         {
-
-            
-
-            //foreach (IHardware hardware in _computer.Hardware)
-            //{
-
-            //    //Console.WriteLine("Hardware: {0}", hardware.Name);
-
-            //    //foreach (IHardware subhardware in hardware.SubHardware)
-            //    //{
-            //       // Console.WriteLine("\tSubhardware: {0}", subhardware.Name);
-
-            //       // foreach (ISensor sensor in subhardware.Sensors)
-            //            //Console.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
-            //           // if (sensor.SensorType == SensorType.Temperature)
-            //           // {
-
-            //           //     string valueStr = sensor.Value.HasValue ? $"{sensor.Value.Value}°C" : "NULL";
-            //            //    Console.WriteLine($"\t[ТЕМПЕРАТУРА] {sensor.Name}: {valueStr}");
-            //           // }
-            //   // }
-
-            //  //  foreach (ISensor sensor in hardware.Sensors)
-            //      //  Console.WriteLine("\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
-            //}
-            _computer.Accept(new UpdateVisitor());
+            _computer.Accept(_updateVisitor);
             _cpu.UpdateData(_current);
-
         }
+
         public void Dispose()
         {
             _computer.Close();

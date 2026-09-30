@@ -10,5 +10,10 @@ namespace CGMonitor.Sensors
         private ISensor? _temperature;
         private ISensor? _clock;
         private ISensor? _load;
+
+        public void Initialize(IHardware hardware)
+        {
+
+        }
     }
 }
