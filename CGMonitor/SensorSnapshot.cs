@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 
 namespace CGMonitor
 {
     public class SensorSnapshot
     {
-        public int CpuLoad { get; init; }
-        public int CpuTemp { get; init; }
-        public int CpuClocks { get; init; }
-        public int GpuLoad { get; init; }
-        public int GpuTemp { get; init; }
-        public int GpuMemLoad { get; init; }
-        public int GpuMemAll { get; init; }
-        public int GpuClocks { get; init; }
-        public int PhysMemLoad { get; init; }
-        public int PhysMemAll { get; init; }
-        public int PhysMemClocks { get; init; }
+       
+        public float? CpuLoad { get; set; }
+        public float? CpuTemp { get; set; }
+        public float? CpuClocks { get; set; }
 
+   
+        public float? GpuLoad { get; set; }
+        public float? GpuTemp { get; set; }
+        public float? GpuMemLoad { get; set; } 
+        public float? GpuMemAll { get; set; }  
+        public float? GpuClocks { get; set; }
 
+      
+        public float? PhysMemLoad { get; set; }   
+        public float? PhysMemAll { get; set; }    
+        public float? PhysMemClocks { get; set; } 
     }
 }
