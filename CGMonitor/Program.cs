@@ -9,8 +9,10 @@ namespace CGMonitor
         {
             var overlay = new OverlayApp();
             await overlay.Run();
-            HardwareTester.RunDiagnostics();
-
+            HardwareMonitor mon = new HardwareMonitor();
+            while (true) {mon.Update();
+ }
+            
         }
     }
 }
