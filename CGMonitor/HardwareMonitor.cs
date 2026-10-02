@@ -11,6 +11,8 @@ namespace CGMonitor
     public class HardwareMonitor
     {
         private readonly CPUMonitor _cpu = new CPUMonitor();
+        private readonly GPUMonitor _gpu = new GPUMonitor();
+        private readonly AmdApuMonitor _amdApuMonitor = new AmdApuMonitor();
         private readonly UpdateVisitor _updateVisitor = new UpdateVisitor();
         public SensorSnapshot Snapshot { get => _current; }
         private SensorSnapshot _current { get; set; }
@@ -48,15 +50,18 @@ namespace CGMonitor
             {
                 if(hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel|| hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia)
                 {
-                    //_gpu.Initialize(hardware)
+                    _gpu.Initialize(hardware);
                 }
             }
+            _amdApuMonitor.Initialize();
         }
 
         public void Update()
         {
             _computer.Accept(_updateVisitor);
             _cpu.UpdateData(_current);
+            _gpu.UpdateData(_current);
+            _amdApuMonitor.UpdateData(_current);
         }
 
         public void Dispose()
