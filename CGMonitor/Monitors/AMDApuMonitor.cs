@@ -1,4 +1,5 @@
 ﻿using CGMonitor;
+using LibreHardwareMonitor.Hardware;
 using System;
 using System.Runtime.InteropServices;
 
@@ -69,10 +70,17 @@ public class AmdApuMonitor : IDisposable
 
         return null;
     }
+    private ISensor? _power;
 
+    public void Initialize(IHardware hardware)
+    {
+        _power = SensorSelector.Find(hardware, SensorType.Power, "GPU Core", "GPU Package");
+
+    }
     public void UpdateData(SensorSnapshot snapshot)
     {
         snapshot.GpuTemp = ReadTemperature();
+        snapshot.GpuPower = _power?.Value;
     }
 
     public void Dispose()

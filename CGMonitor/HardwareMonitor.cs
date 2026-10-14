@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Up;
+using Vortice.DXCore;
 using static CGMonitor.SensorSnapshot;
 
 namespace CGMonitor
@@ -12,6 +13,7 @@ namespace CGMonitor
     {
         private readonly CPUMonitor _cpu = new CPUMonitor();
         private readonly GPUMonitor _gpu = new GPUMonitor();
+        private readonly RAMMonitor _ram = new RAMMonitor();
         private readonly AmdApuMonitor _amdApuMonitor = new AmdApuMonitor();
         private readonly UpdateVisitor _updateVisitor = new UpdateVisitor();
         public SensorSnapshot Snapshot { get => _current; }
@@ -32,15 +34,15 @@ namespace CGMonitor
                                     _computer.Open();
                                     _current = new SensorSnapshot();
                                     InitializeMonitors();
-                                   }
-       
-
+        }
+    
         private void InitializeMonitors()
         {
             _computer.Accept(_updateVisitor);
 
             foreach (IHardware hardware in _computer.Hardware)
             {
+
                 if (hardware.HardwareType == HardwareType.Cpu)
                 {
                     _cpu.Initialize(hardware); 
@@ -48,9 +50,21 @@ namespace CGMonitor
             }
             foreach(IHardware hardware in _computer.Hardware)
             {
-                if(hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel|| hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia)
+
+                if (hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel|| hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia)
                 {
                     _gpu.Initialize(hardware);
+                }
+            }
+            foreach (IHardware hardware in _computer.Hardware)
+            {
+
+                if (hardware.HardwareType == HardwareType.Memory)
+                {
+                    if(hardware.Name == "Total Memory") { 
+                        _ram.Initialize(hardware);
+                        break;
+                    }
                 }
             }
             _amdApuMonitor.Initialize();
@@ -58,9 +72,12 @@ namespace CGMonitor
 
         public void Update()
         {
+
             _computer.Accept(_updateVisitor);
+
             _cpu.UpdateData(_current);
             _gpu.UpdateData(_current);
+            _ram.UpdateData(_current);
             _amdApuMonitor.UpdateData(_current);
         }
 
