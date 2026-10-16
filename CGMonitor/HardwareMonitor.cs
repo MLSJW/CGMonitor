@@ -2,6 +2,7 @@
 using LibreHardwareMonitor.Hardware;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Up;
 using Vortice.DXCore;
@@ -19,6 +20,7 @@ namespace CGMonitor
         public SensorSnapshot Snapshot { get => _current; }
         private SensorSnapshot _current { get; set; }
         private Computer _computer { get; set; }
+        private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
 
         public HardwareMonitor() {
                                    _computer = new Computer
@@ -72,9 +74,9 @@ namespace CGMonitor
 
         public void Update()
         {
-
-            _computer.Accept(_updateVisitor);
-
+            
+            _computer.Accept(_updateVisitor); 
+            
             _cpu.UpdateData(_current);
             _gpu.UpdateData(_current);
             _ram.UpdateData(_current);
