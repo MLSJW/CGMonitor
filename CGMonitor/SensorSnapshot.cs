@@ -12,6 +12,7 @@ namespace CGMonitor
 
         public float? GpuLoad { get; set; }
         public float? GpuTemp { get; set; }
+        public float? GpuTempMobile { get; set; }
         public float? GpuMemLoad { get; set; } 
         public float? GpuMemAll { get; set; }  
         public float? GpuClocks { get; set; }

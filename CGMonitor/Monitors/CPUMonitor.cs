@@ -17,7 +17,7 @@ namespace CGMonitor.Sensors
         public void Initialize(IHardware cpuhardware)
         {
             hardware = cpuhardware;
-            _temperature = SensorSelector.Find(cpuhardware, SensorType.Temperature, "Core (Tctl/Tdie)");
+            _temperature = SensorSelector.Find(cpuhardware, SensorType.Temperature, "Core (Tctl/Tdie)", "CPU Package");
             _load = SensorSelector.Find(cpuhardware, SensorType.Load, "CPU Total");
             _power = SensorSelector.Find(cpuhardware, SensorType.Power, "Package");
             

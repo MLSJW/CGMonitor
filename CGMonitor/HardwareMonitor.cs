@@ -53,7 +53,7 @@ namespace CGMonitor
             foreach(IHardware hardware in _computer.Hardware)
             {
 
-                if (hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel|| hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia)
+                if (hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel || hardware.HardwareType == HardwareType.GpuNvidia)
                 {
                     _gpu.Initialize(hardware);
                 }

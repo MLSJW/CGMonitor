@@ -28,33 +28,65 @@ public class AmdApuMonitor : IDisposable
 
     private IntPtr _context = IntPtr.Zero;
     private bool _isInitialized = false;
-
+    private bool _dllMissing = false; 
 
     public bool Initialize()
     {
+        if (_dllMissing) return false;
         if (_isInitialized) return true;
 
+        try
+        {
+            return TryCreateControl();
+        }
+        catch (DllNotFoundException)
+        {
+            _dllMissing = true;
+            _isInitialized = false;
+            return false;
+        }
+        catch (Exception)
+        {
+            _isInitialized = false;
+            return false;
+        }
+    }
+
+    private bool TryCreateControl()
+    {
         int initResult = ADL2_Main_Control_Create(AllocMemory, 1, out _context);
         if (initResult == 0)
         {
             _isInitialized = true;
             return true;
         }
-
         return false;
     }
 
     public float? ReadTemperature()
     {
+        if (_dllMissing) return null;
+
         if (!_isInitialized || _context == IntPtr.Zero)
         {
             if (!Initialize()) return null;
         }
 
+        try
+        {
+            return TryGetTemperature();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    private float? TryGetTemperature()
+    {
         for (int adapterIndex = 0; adapterIndex < 4; adapterIndex++)
         {
             int rawTemperature = 0;
-
             int res = ADL2_OverdriveN_Temperature_Get(
                 _context,
                 adapterIndex,
@@ -67,19 +99,27 @@ public class AmdApuMonitor : IDisposable
                 return rawTemperature / 1000f;
             }
         }
-
         return null;
     }
+
     private ISensor? _power;
 
     public void Initialize(IHardware hardware)
     {
         _power = SensorSelector.Find(hardware, SensorType.Power, "GPU Core", "GPU Package");
-
     }
+
     public void UpdateData(SensorSnapshot snapshot)
     {
-        snapshot.GpuTemp = ReadTemperature();
+        try
+        {
+            snapshot.GpuTempMobile = ReadTemperature();
+        }
+        catch (Exception)
+        {
+            snapshot.GpuTempMobile = null; 
+        }
+
         snapshot.GpuPower = _power?.Value;
     }
 
@@ -87,7 +127,11 @@ public class AmdApuMonitor : IDisposable
     {
         if (_context != IntPtr.Zero)
         {
-            ADL2_Main_Control_Destroy(_context);
+            try
+            {
+                ADL2_Main_Control_Destroy(_context);
+            }
+            catch { }
             _context = IntPtr.Zero;
             _isInitialized = false;
         }

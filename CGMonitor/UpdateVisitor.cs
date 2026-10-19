@@ -5,7 +5,6 @@ using LibreHardwareMonitor.Hardware;
 
 namespace Up
 {
-
     internal class UpdateVisitor : IVisitor
     {
         public void VisitComputer(IComputer computer) => computer.Traverse(this);
