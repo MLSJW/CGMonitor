@@ -1,7 +1,4 @@
 ﻿using LibreHardwareMonitor.Hardware;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CGMonitor.Sensors
 {
@@ -13,12 +10,12 @@ namespace CGMonitor.Sensors
         private ISensor? _used;
         private ISensor? _available;
 
-        public void Initialize(IHardware hardware)
+        public void Initialize(IHardware ramhardware)
         {
-            _clock = SensorSelector.Find(hardware, SensorType.Clock);
-            _load = SensorSelector.Find(hardware, SensorType.Load, "Memory");
-            _available = SensorSelector.Find(hardware, SensorType.Data, "Memory Available");
-            _used = SensorSelector.Find(hardware, SensorType.Data, "Memory Used");
+            _clock = SensorSelector.Find(ramhardware, SensorType.Clock);
+            _load = SensorSelector.Find(ramhardware, SensorType.Load, "Memory");
+            _available = SensorSelector.Find(ramhardware, SensorType.Data, "Memory Available");
+            _used = SensorSelector.Find(ramhardware, SensorType.Data, "Memory Used");
         }
         
         public void UpdateData(SensorSnapshot snapshot)

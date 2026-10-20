@@ -11,12 +11,14 @@ namespace CGMonitor.Sensors
         private ISensor? _temperature;
         private ISensor? _power;
         private ISensor? _load;
-        private IHardware hardware;
+        private string? _cpuName;
+        private IHardware? hardware;
         private float _currentFreq;
 
         public void Initialize(IHardware cpuhardware)
         {
             hardware = cpuhardware;
+            _cpuName = SensorSelector.FindHardwareName(cpuhardware);
             _temperature = SensorSelector.Find(cpuhardware, SensorType.Temperature, "Core (Tctl/Tdie)", "CPU Package");
             _load = SensorSelector.Find(cpuhardware, SensorType.Load, "CPU Total");
             _power = SensorSelector.Find(cpuhardware, SensorType.Power, "Package");
@@ -24,6 +26,7 @@ namespace CGMonitor.Sensors
         }
         public void UpdateData(SensorSnapshot snapshot)
         {
+            snapshot.CpuName = _cpuName;
             snapshot.CpuTemp = _temperature?.Value;
             snapshot.CpuLoad = _load?.Value;
             snapshot.CpuPower = _power?.Value;

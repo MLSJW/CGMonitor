@@ -1,8 +1,4 @@
 ﻿using LibreHardwareMonitor.Hardware;
-using LibreHardwareMonitor.Interop.PowerMonitor;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CGMonitor
 {
@@ -22,6 +18,11 @@ namespace CGMonitor
                 }
             }
             return null;
+        }
+        public static string FindHardwareName(IHardware hardware)
+        {
+            if (hardware.Name == null) { return "N/A"; }
+            return hardware.Name;
         }
     }
 }
